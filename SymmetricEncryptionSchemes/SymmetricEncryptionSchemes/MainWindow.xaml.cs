@@ -25,6 +25,9 @@ namespace Crypto1
         public MainWindow()
         {
             InitializeComponent();
+
+            foreach (SchemesEnum comboItem in Enum.GetValues(typeof(SchemesEnum)))
+                comboBox.Items.Add(comboItem);
         }
 
         private async Task<List<string>> readConvertTextTo64Bits(Microsoft.Win32.OpenFileDialog dialog)
@@ -54,22 +57,34 @@ namespace Crypto1
             return blocks64bit;
         }
 
-        private void encryptAndConvert(List<string> blocks64Bit)
+        private string encryptAndConvert(List<string> blocks64Bit)
         {
             //generate and write key
             string key = Operations.generate64BitKey();
             textBlock.Text += "Key:" + Environment.NewLine + key;
 
+            List<string> encrypted64BitBlocks = new List<string>();
             //encrypt
+            switch (comboBox.SelectedIndex)
+            {
+                case 0: encrypted64BitBlocks = Schemes.ECB(blocks64Bit, key);
+                    break;
+                default: MessageBox.Show("Wrong.");
+                    break;
+            }
+            
 
-            List<string> blocks8Bit = Converters.To8BitBinaryStrings(blocks64Bit);
+            List<string> blocks8Bit = Converters.To8BitBinaryStrings(encrypted64BitBlocks);
 
             textBlock.Text += Environment.NewLine + "8 bit: " + Environment.NewLine;
 
             foreach (string s in blocks8Bit)
                 textBlock.Text += s + " ";
 
-            textBlock.Text += Environment.NewLine + Converters.FromBinaryToString(blocks8Bit);
+            string encryptedText = Converters.FromBinaryToString(blocks8Bit);
+            textBlock.Text += Environment.NewLine + encryptedText;
+
+            return encryptedText;
         }
 
         private async void filePickerButton_Click(object sender, RoutedEventArgs e)
@@ -81,7 +96,8 @@ namespace Crypto1
             if (result == true)
             {
                 List<string> blocks64Bit = await readConvertTextTo64Bits(dialog);
-                encryptAndConvert(blocks64Bit);
+                string encryptedText = encryptAndConvert(blocks64Bit);
+                await InOut.WriteTextToFile(dialog.FileName, encryptedText);
             }
         }
     }

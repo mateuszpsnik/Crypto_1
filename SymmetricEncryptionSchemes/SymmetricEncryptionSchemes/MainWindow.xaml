@@ -11,7 +11,12 @@
             <RowDefinition Height="1*"/>
             <RowDefinition Height="3*"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
         <Button x:Name="filePickerButton" Content="Pick a file" Click="filePickerButton_Click"/>
-        <TextBox Grid.Row="1" x:Name="textBlock" Text="aaa"/>
+        <ComboBox x:Name="comboBox" Grid.Column="1"/>
+        <TextBox Grid.Row="1" Grid.ColumnSpan="2" x:Name="textBlock" Text="aaa"/>
     </Grid>
 </Window>

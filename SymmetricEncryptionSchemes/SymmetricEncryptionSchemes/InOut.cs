@@ -26,5 +26,15 @@ namespace SymmetricEncryptionSchemes
 
             return result;
         }
+
+        public static async Task WriteTextToFile(string filename, string text)
+        {
+            UnicodeEncoding ue = new UnicodeEncoding();
+            byte[] textToWrite = ue.GetBytes(text);
+            using (FileStream writer = File.OpenWrite(filename))
+            {
+                await writer.WriteAsync(textToWrite, 0, text.Length);
+            }
+        }
     }
 }
