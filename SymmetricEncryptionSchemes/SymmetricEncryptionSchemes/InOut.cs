@@ -27,14 +27,10 @@ namespace SymmetricEncryptionSchemes
             return result;
         }
 
-        public static async Task WriteTextToFile(string filename, string text)
+        public static async Task WriteTextToFile(string filename, string text, string base64)
         {
-            UnicodeEncoding ue = new UnicodeEncoding();
-            byte[] textToWrite = ue.GetBytes(text);
-            using (FileStream writer = File.OpenWrite(filename))
-            {
-                await writer.WriteAsync(textToWrite, 0, text.Length);
-            }
+            string textToWrite = text + Environment.NewLine + base64;
+            await File.WriteAllTextAsync(filename, textToWrite, Encoding.Unicode);
         }
     }
 }

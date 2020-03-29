@@ -9,14 +9,18 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
-            <RowDefinition Height="3*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="6*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
-        <Button x:Name="filePickerButton" Content="Pick a file" Click="filePickerButton_Click"/>
+        <Button x:Name="filePickerButton" Grid.RowSpan="2" Content="Pick a file" 
+                Click="filePickerButton_Click"/>
         <ComboBox x:Name="comboBox" Grid.Column="1"/>
-        <TextBox Grid.Row="1" Grid.ColumnSpan="2" x:Name="textBlock" Text="aaa"/>
+        <Button x:Name="saveFilePickerButton" Content="Save the text in a file" 
+                Click="saveFilePickerButton_Click" Grid.Column="1" Grid.Row="1"/>
+        <TextBox Grid.Row="2" Grid.ColumnSpan="2" x:Name="textBlock" Text="aaa"/>
     </Grid>
 </Window>

@@ -6,76 +6,47 @@ namespace Crypto1
 {
     public static class Converters
     {
-        public static List<string> To64BitStrings(string[] binaryStrings)
+        public static List<byte[]> To64BitBlocks(byte[] bytes)
         {
-            List<string> blocks64bit = new List<string>();
-            int iterator = 0;
-            int k = 0;
-            while (iterator < binaryStrings.Length)
+            List<byte[]> byteBlocks = new List<byte[]>();
+            byte[] block64bit = new byte[8];
+
+            int i = 0;
+            for (int j = 0; j < bytes.Length; j++)
             {
-                string block64bit = "";
-
-                for (int j = k; j < k + 8; j++)
+                block64bit[i] = bytes[j];
+                i++;
+                if (i == 8 || j == bytes.Length - 1)
                 {
-                    if (iterator < binaryStrings.Length)
-                        block64bit += binaryStrings[j];
-                    iterator++;
-                }
-
-                blocks64bit.Add(block64bit);
-                k += 8;
-            }
-            return blocks64bit;
-        }
-
-        public static List<string> To8BitBinaryStrings(List<string> listOf64bitStrings)
-        {
-            List<string> listof8BitStrings = new List<string>();
-            foreach (string s in listOf64bitStrings)
-            {
-                string string8Bits = "";
-                int i = 0;
-                foreach (char c in s)
-                {
-                    string8Bits += c;
-                    if (i == 7)
-                    {
-                        listof8BitStrings.Add(string8Bits);
-                        string8Bits = "";
-                        i = 0;
-                    }
-                    else
-                        i++;
+                    byteBlocks.Add(block64bit);
+                    i = 0;
+                    block64bit = new byte[8];
                 }
             }
-            return listof8BitStrings;
+            return byteBlocks;
         }
 
-        public static string FromBinaryToString(List<string> binary8Bit)
+        public static string ByteAsStringLength8(byte b)
         {
-            string stringToReturn = "";
+            string s = Convert.ToString(b, 2);
+            int length = s.Length;
+            string toReturn = "";
 
-            foreach (string s in binary8Bit)
-                stringToReturn += (char)Operations.BinaryToDecimal(s);
+            for (int i = 0; i < (8 - length); i++)
+                toReturn += "0";
 
-            return stringToReturn;
+            toReturn += s;
+            return toReturn;
         }
 
-        public static string[] CharArrayToBinary(char[] inputArray)
+        public static byte[] CharArrayToByte(char[] inputArray)
         {
-            string[] charsAsBinaryStrings = new string[inputArray.Length];
+            byte[] charsAsBytes = new byte[inputArray.Length];
 
-            for (int i = 0; i < charsAsBinaryStrings.Length; i++)
-            {
-                string s = "";
-                if (inputArray[i] < 64)
-                    s = "00";
-                else
-                    s = "0";
-                charsAsBinaryStrings[i] = s + Convert.ToString(inputArray[i], 2);
-            }
+            for (int i = 0; i < inputArray.Length; i++)
+                charsAsBytes[i] = (byte)inputArray[i];
 
-            return charsAsBinaryStrings;
+            return charsAsBytes;
         }
     }
 }

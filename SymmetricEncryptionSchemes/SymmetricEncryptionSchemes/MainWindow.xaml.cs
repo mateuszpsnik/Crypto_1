@@ -30,7 +30,11 @@ namespace Crypto1
                 comboBox.Items.Add(comboItem);
         }
 
-        private async Task<List<string>> readConvertTextTo64Bits(Microsoft.Win32.OpenFileDialog dialog)
+        private string encryptedTextUnicode;
+        private string encryptedTextBase64;
+
+        private async Task<List<byte[]>> readConvertTextTo64Bits
+            (Microsoft.Win32.OpenFileDialog dialog)
         {
             string filename = dialog.FileName;
             char[] readChars = await InOut.ReadTextFromFile(filename);
@@ -42,49 +46,70 @@ namespace Crypto1
             foreach (int i in readChars)
                 textBlock.Text += i.ToString() + " ";
           
-            string[] intsAsBinaryStrings = Converters.CharArrayToBinary(readChars);
+            byte[] textAsBytes = Converters.CharArrayToByte(readChars);
             textBlock.Text += Environment.NewLine;
-            foreach (string s in intsAsBinaryStrings)
-                textBlock.Text += $"{s} ";
+            foreach (byte b in textAsBytes)
+                textBlock.Text += Convert.ToString(b, 2) + " ";
 
-            List<string> blocks64bit = Converters.To64BitStrings(intsAsBinaryStrings);
+            List<byte[]> blocks64bit = Converters.To64BitBlocks(textAsBytes);
 
             textBlock.Text += Environment.NewLine + "64 bit:" + Environment.NewLine;
 
-            foreach(string s in blocks64bit)
-                textBlock.Text += s + Environment.NewLine;
+            foreach(var block64 in blocks64bit)
+            {
+                foreach (var b in block64)
+                {
+                    textBlock.Text += Converters.ByteAsStringLength8(b);
+                }
+                textBlock.Text += " ";
+            }
 
             return blocks64bit;
         }
 
-        private string encryptAndConvert(List<string> blocks64Bit)
+        private void encryptAndConvert(List<byte[]> blocks64Bit)
         {
             //generate and write key
-            string key = Operations.generate64BitKey();
-            textBlock.Text += "Key:" + Environment.NewLine + key;
+            byte[] key = Operations.generate64BitKey();
+            textBlock.Text += Environment.NewLine + "Key:" + Environment.NewLine;
+            foreach (var b in key)
+                textBlock.Text += Converters.ByteAsStringLength8(b);
 
-            List<string> encrypted64BitBlocks = new List<string>();
+            List<byte[]> encrypted64BitBlocks = new List<byte[]>();
             //encrypt
             switch (comboBox.SelectedIndex)
             {
                 case 0: encrypted64BitBlocks = Schemes.ECB(blocks64Bit, key);
                     break;
-                default: MessageBox.Show("Wrong.");
+                default: MessageBox.Show("You have not chosen any option.");
                     break;
             }
-            
 
-            List<string> blocks8Bit = Converters.To8BitBinaryStrings(encrypted64BitBlocks);
+            textBlock.Text += Environment.NewLine + "Encrypted 64-bit blocks:" + Environment.NewLine;
+            foreach (var arr in encrypted64BitBlocks)
+            {
+                foreach (var b in arr)
+                    textBlock.Text += Converters.ByteAsStringLength8(b);
+                textBlock.Text += " ";
+            }
 
             textBlock.Text += Environment.NewLine + "8 bit: " + Environment.NewLine;
+            encryptedTextUnicode += "Unicode: ";
+            encryptedTextBase64 += Environment.NewLine;
+            encryptedTextBase64 += "Base-64: ";
 
-            foreach (string s in blocks8Bit)
-                textBlock.Text += s + " ";
+            foreach (var arr in encrypted64BitBlocks)
+            {
+                foreach (var b in arr)
+                    textBlock.Text += Convert.ToString(b, 2) + " ";
+                textBlock.Text += " ";
 
-            string encryptedText = Converters.FromBinaryToString(blocks8Bit);
-            textBlock.Text += Environment.NewLine + encryptedText;
+                encryptedTextUnicode += System.Text.Encoding.Unicode.GetString(arr);
+                encryptedTextBase64 += Convert.ToBase64String(arr);
+            }
 
-            return encryptedText;
+            textBlock.Text += Environment.NewLine + encryptedTextUnicode;
+            textBlock.Text += encryptedTextBase64;
         }
 
         private async void filePickerButton_Click(object sender, RoutedEventArgs e)
@@ -95,10 +120,22 @@ namespace Crypto1
 
             if (result == true)
             {
-                List<string> blocks64Bit = await readConvertTextTo64Bits(dialog);
-                string encryptedText = encryptAndConvert(blocks64Bit);
-                await InOut.WriteTextToFile(dialog.FileName, encryptedText);
+                List<byte[]> blocks64Bit = await readConvertTextTo64Bits(dialog);
+                encryptAndConvert(blocks64Bit);
             }
         }
+
+        private async void saveFilePickerButton_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
+
+            var result = dialog.ShowDialog();
+
+            if (result == true)
+            {
+                await InOut.WriteTextToFile(dialog.FileName, encryptedTextUnicode, encryptedTextBase64);
+            }
+        }
+        
     }
 }
