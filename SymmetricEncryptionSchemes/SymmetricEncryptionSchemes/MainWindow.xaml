@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Crypto1"
         mc:Ignorable="d"
-        Title="Encryptor" Height="350" Width="525">
+        Title="Encryptor" Height="350" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
@@ -17,10 +17,11 @@
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
         <Button x:Name="filePickerButton" Grid.RowSpan="2" Content="Pick a file" 
-                Click="filePickerButton_Click"/>
-        <ComboBox x:Name="comboBox" Grid.Column="1"/>
-        <Button x:Name="saveFilePickerButton" Content="Save the text in a file" 
-                Click="saveFilePickerButton_Click" Grid.Column="1" Grid.Row="1"/>
+                Click="filePickerButton_Click" Visibility="Hidden"/>
+        <ComboBox x:Name="comboBox" Grid.Column="1" MouseDoubleClick="comboBox_MouseDoubleClick"
+                  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+        <Button x:Name="saveFilePickerButton" Content="SAVE" 
+                Click="saveFilePickerButton_Click" Grid.Column="1" Grid.Row="1" Visibility="Hidden"/>
         <TextBox Grid.Row="2" Grid.ColumnSpan="2" x:Name="textBlock" Text="aaa"/>
     </Grid>
 </Window>

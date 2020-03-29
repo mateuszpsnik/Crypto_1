@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace Crypto1
 {
@@ -27,6 +28,9 @@ namespace Crypto1
 
             foreach (ModesEnum comboItem in Enum.GetValues(typeof(ModesEnum)))
                 comboBox.Items.Add(comboItem);
+
+            InitialText initialText = new InitialText();
+            textBlock.Text = initialText.Text;
         }
 
         private string encryptedTextUnicode;
@@ -141,21 +145,23 @@ namespace Crypto1
 
         private async void filePickerButton_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
-
+            saveFilePickerButton.Visibility = Visibility.Visible;
+            textBlock.Text = "";
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             var result = dialog.ShowDialog();
 
             if (result == true)
             {
                 List<byte[]> blocks64Bit = await readConvertTextTo64Bits(dialog);
                 encryptAndConvert(blocks64Bit);
-            }
+            } 
         }
 
         private async void saveFilePickerButton_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
-
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             var result = dialog.ShowDialog();
 
             if (result == true)
@@ -163,6 +169,10 @@ namespace Crypto1
                 await InOut.WriteTextToFile(dialog.FileName, encryptedTextUnicode, encryptedTextBase64);
             }
         }
-        
+
+        private void comboBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            filePickerButton.Visibility = Visibility.Visible;
+        }
     }
 }
