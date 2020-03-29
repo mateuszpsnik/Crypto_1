@@ -9,6 +9,6 @@ namespace Crypto1
         ECB,
         CBC,
         CFB,
-
+        DES
     }
 }

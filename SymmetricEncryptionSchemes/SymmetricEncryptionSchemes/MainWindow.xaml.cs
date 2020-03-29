@@ -13,7 +13,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using SymmetricEncryptionSchemes;
 
 namespace Crypto1
 {
@@ -94,6 +93,16 @@ namespace Crypto1
                     {
                         byte[] vectorIV = new byte[8];
                         encrypted64BitBlocks = Modes.CFB(blocks64Bit, key, ref vectorIV);
+                        textBlock.Text += Environment.NewLine + "Vector IV:" + Environment.NewLine;
+                        foreach (var b in vectorIV)
+                            textBlock.Text += Converters.ByteAsStringLength8(b);
+                        break;
+                    }
+                case 3:
+                    {
+                        byte[] vectorIV = new byte[8];
+                        DES des = new DES(blocks64Bit, key, ref vectorIV);
+                        encrypted64BitBlocks = des.EncryptedBlocks;
                         textBlock.Text += Environment.NewLine + "Vector IV:" + Environment.NewLine;
                         foreach (var b in vectorIV)
                             textBlock.Text += Converters.ByteAsStringLength8(b);
