@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SymmetricEncryptionSchemes
+namespace Crypto1
 {
     public static class InOut
     {

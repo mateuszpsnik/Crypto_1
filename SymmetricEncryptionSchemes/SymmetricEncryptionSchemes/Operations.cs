@@ -6,7 +6,7 @@ namespace Crypto1
 {
     public static class Operations
     {
-        public static byte[] generate64BitKey()
+        public static byte[] Generate64BitKey()
         {
             Random random = new Random();
             byte[] key = new byte[8];

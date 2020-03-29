@@ -26,7 +26,7 @@ namespace Crypto1
         {
             InitializeComponent();
 
-            foreach (SchemesEnum comboItem in Enum.GetValues(typeof(SchemesEnum)))
+            foreach (ModesEnum comboItem in Enum.GetValues(typeof(ModesEnum)))
                 comboBox.Items.Add(comboItem);
         }
 
@@ -70,7 +70,7 @@ namespace Crypto1
         private void encryptAndConvert(List<byte[]> blocks64Bit)
         {
             //generate and write key
-            byte[] key = Operations.generate64BitKey();
+            byte[] key = Operations.Generate64BitKey();
             textBlock.Text += Environment.NewLine + "Key:" + Environment.NewLine;
             foreach (var b in key)
                 textBlock.Text += Converters.ByteAsStringLength8(b);
@@ -79,8 +79,26 @@ namespace Crypto1
             //encrypt
             switch (comboBox.SelectedIndex)
             {
-                case 0: encrypted64BitBlocks = Schemes.ECB(blocks64Bit, key);
+                case 0: encrypted64BitBlocks = Modes.ECB(blocks64Bit, key);
                     break;
+                case 1:
+                    {
+                        byte[] vectorIV = new byte[8];
+                        encrypted64BitBlocks = Modes.CBC(blocks64Bit, key, ref vectorIV);
+                        textBlock.Text += Environment.NewLine + "Vector IV:" + Environment.NewLine;
+                        foreach (var b in vectorIV)
+                            textBlock.Text += Converters.ByteAsStringLength8(b);
+                        break;
+                    }
+                case 2:
+                    {
+                        byte[] vectorIV = new byte[8];
+                        encrypted64BitBlocks = Modes.CFB(blocks64Bit, key, ref vectorIV);
+                        textBlock.Text += Environment.NewLine + "Vector IV:" + Environment.NewLine;
+                        foreach (var b in vectorIV)
+                            textBlock.Text += Converters.ByteAsStringLength8(b);
+                        break;
+                    }
                 default: MessageBox.Show("You have not chosen any option.");
                     break;
             }

@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SymmetricEncryptionSchemes
+namespace Crypto1
 {
-    public enum SchemesEnum
+    public enum ModesEnum
     {
         ECB,
+        CBC,
+        CFB,
 
     }
 }
